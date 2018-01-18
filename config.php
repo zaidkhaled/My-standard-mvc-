@@ -13,7 +13,7 @@ define('DS', DIRECTORY_SEPARATOR);
 define('APP_DIR', __DIR__. DS);
 define('SYSTEM_DIR', APP_DIR . 'system' . DS);
 define('CONTROLLER_DIR', APP_DIR . 'controller' . DS);
-define('MODAL_DIR', APP_DIR . 'MODEL' . DS);
+define('MODEL_DIR', APP_DIR . 'model' . DS);
 define('VIEW_DIR', APP_DIR . 'view' . DS);
 
 // SERVER DATE 
