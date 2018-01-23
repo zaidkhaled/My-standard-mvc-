@@ -1,7 +1,7 @@
 <?php 
 
 
-abstract class model
+abstract class Model
 {
     protected $registry;
     
@@ -18,5 +18,10 @@ abstract class model
     public function __get($key)
     {
         return $this->registry ->get($key);
+    }
+    
+    public function cmcm()
+    {
+        echo "hi from model class innen";
     }
 }

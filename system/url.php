@@ -9,8 +9,18 @@ class Url
         $this->url = $url;
     }
     
-    public function link()
+    public function link($route, $args = '')
     {
+        $url  = $this ->url;
         
+        $url .= 'index.php?route='. $route;
+        
+        if($args)
+        {
+            $url .= '&' . ltrim($args, '&');
+        }
+        
+        return $url;
     }
+ 
 }

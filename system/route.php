@@ -60,11 +60,5 @@ class route
         $route = filter_var($route,FILTER_SANITIZE_STRING);
         return $route;
     }
-    
-    private function pre($array)
-    {
-        echo '<pre>';
-        print_r($array);
-        echo '</pre>';
-    }
+
 }

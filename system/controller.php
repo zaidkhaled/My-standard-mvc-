@@ -3,9 +3,12 @@
 
 class Controller
 {
+    protected $data = array();
+    protected $childern = array();
+    protected $template;
     private $registry;
-    
     private $error;
+    private $output;
     
     public function __construct($registry)
     {
@@ -20,6 +23,12 @@ class Controller
     public function __get($key)
     {
         return $this->registry->get($key);
+    }
+    
+    public function redirect($route)
+    {
+       header('location'.$route);
+       exit();
     }
     
     public function dispatch($route, $error)
@@ -46,17 +55,63 @@ class Controller
             else
             {
                 $action = $this -> notFound();
-
             }
 
         }
         else
         {
-            $action = $this -> notFound();
-
+            $action = $this -> notFound(); 
         }
             
             return $action;
+    }
+    
+    protected function render()
+    {
+        if(file_exists($this->template))
+        {
+            extract($this->data);
+            ob_start();
+            require_once $this->template;
+            $this->output = ob_get_contents();
+            ob_end_clean();
+            return $this->output;
+        }
+        else 
+        {
+            die('not found pleace check it');
+        }
+    }
+    
+    private function child($child)
+    {
+        $route = new Route($child); // n't understand it, how was that passable!!
+        
+        if(file_exists($route->getFile()))
+        {
+            require_once $route->getFile() ;
+            
+            $class = $route-> getController();
+            
+            $controller = new $class($this->registry);
+            
+            if(is_callable(array($controller, $route-> getMethod())))
+            {
+                $action = call_user_func_array(array($controller, $route->getMethod()), array());
+               
+            }
+            else
+            {
+                echo "child controller method was not found";
+            }
+
+        }
+        else
+        {
+            echo "child controller was not found";
+
+        }
+ 
     }
     
     private function notFound()

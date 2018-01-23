@@ -12,25 +12,21 @@ else
 }
 
 require_once SYSTEM_DIR . 'startup.php';
+require_once SYSTEM_DIR . 'helpers.php';
 
 // registry class
 
 $registry = new registry();
 
-// Route class
+// request class
 
-$route = (isset($request->get['route']) ? new Route($request->get['route']) : new Route('page/home'));
+$request = new Request();
+$registry->set('Request', $request);
 
 // controller class
 
 $controller = new Controller($registry);
 
-$controller->dispatch($route, new Route('error/not_found')); 
-
-// request class
-
-$request = new Request();
-$registry->set('Request', $request);
 
 // session class
 
@@ -43,22 +39,69 @@ $registry ->set('Session', $session);
 $document = new Document();
 $registry ->set('Document', $document);
 
-// clear class
+// class database
 
-$clear = new Clear();
-$registry->set("Clear", $clear);
+$db = new DB(SERVER_NAME, DB_NAME, DB_USER, DB_PASSWORD);
+$registry->set('db', $db);
+
+// setting class
+
+$setting  = new Setting();
+$registry->set('Settings', $setting);
+
+
+// fetch setting
+
+$sql = "SELECT * FROM aws." . DB_PREFIX . 'setting LIMIT 1';
+$query = $db->query($sql);
+$query->execute();
+$settings_result = $query->fetch();
+
+foreach($settings_result as $key => $value)
+{
+    $setting->set($key, $value);
+}
+
+
+
+// fetch langs info
+
+$sql = "SELECT * FROM aws." . DB_PREFIX . 'langs WHERE status = 1';
+$query = $db->query($sql);
+$query -> execute();
+$fetch_langs = $query->fetchAll();
+
+foreach ($fetch_langs as $lang)
+{
+    $langs[$lang['code']] = $lang;
+}
+
+
+$current_lang = $langs[$setting->get('lang')];
+
+// lang class 
+
+$language = new Lang($current_lang['dir']);
+$registry->set('Lang', $language);
+
 
 //model class
 
 $loder = new Loder($registry);
 $registry->set('Loder', $loder);
 
-$loder->model("test/home");
-$registry->get('model_test_home')->Amm();
+
+// url class 
+
+$url = new Url(HTTP_SERVER);
+$registry->set('Url', $url);
 
 
+// Route class
 
+$route = (isset($request->get['route']) ? new Route($request->get['route']) : new Route('page/home'));
 
+$controller->dispatch($route, new Route('error/not_found')); 
 
 
 
