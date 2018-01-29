@@ -39,6 +39,7 @@ class Controller
     
     private function execute($route)
     {
+       
         if(file_exists($route->getFile()))
         {
             require_once $route->getFile() ;
@@ -50,7 +51,7 @@ class Controller
             if(is_callable(array($controller, $route-> getMethod())))
             {
                 $action = call_user_func_array(array($controller, $route->getMethod()), array());
-               
+                return $this->output; // output ist nicht klar fur mich 
             }
             else
             {
@@ -68,6 +69,11 @@ class Controller
     
     protected function render()
     {
+        foreach($this->childern as $child)
+        {
+            $this->data[basename($child)] = $this->child($child);
+        }
+        
         if(file_exists($this->template))
         {
             extract($this->data);
@@ -75,17 +81,17 @@ class Controller
             require_once $this->template;
             $this->output = ob_get_contents();
             ob_end_clean();
-            return $this->output;
+            return $this->output; 
         }
         else 
         {
-            die('not found pleace check it');
+            die($this->template . 'not found pleace check it');
         }
     }
     
     private function child($child)
     {
-        $route = new Route($child); // n't understand it, how was that passable!!
+        $route = new Route($child); 
         
         if(file_exists($route->getFile()))
         {
@@ -98,13 +104,12 @@ class Controller
             if(is_callable(array($controller, $route-> getMethod())))
             {
                 $action = call_user_func_array(array($controller, $route->getMethod()), array());
-               
+                 return $controller->output;
             }
             else
             {
                 echo "child controller method was not found";
             }
-
         }
         else
         {

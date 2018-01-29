@@ -12,7 +12,6 @@ else
 }
 
 require_once SYSTEM_DIR . 'startup.php';
-require_once SYSTEM_DIR . 'helpers.php';
 
 // registry class
 
@@ -22,6 +21,7 @@ $registry = new registry();
 
 $request = new Request();
 $registry->set('Request', $request);
+
 
 // controller class
 
@@ -50,14 +50,13 @@ $setting  = new Setting();
 $registry->set('Settings', $setting);
 
 
-// fetch setting
+// fetch setting curent lang
 
-$sql = "SELECT * FROM aws." . DB_PREFIX . 'setting LIMIT 1';
-$query = $db->query($sql);
-$query->execute();
-$settings_result = $query->fetch();
+$limit['limit'] = '1';
 
-foreach($settings_result as $key => $value)
+$settings_result = $db->fetch('setting', $limit, "fetch");
+
+foreach ($settings_result as $key => $value)
 {
     $setting->set($key, $value);
 }
@@ -66,10 +65,9 @@ foreach($settings_result as $key => $value)
 
 // fetch langs info
 
-$sql = "SELECT * FROM aws." . DB_PREFIX . 'langs WHERE status = 1';
-$query = $db->query($sql);
-$query -> execute();
-$fetch_langs = $query->fetchAll();
+$where = array('status', 1);
+
+$fetch_langs = $db->fetch('langs', $where);
 
 foreach ($fetch_langs as $lang)
 {
@@ -90,6 +88,10 @@ $registry->set('Lang', $language);
 $loder = new Loder($registry);
 $registry->set('Loder', $loder);
 
+// response class
+
+$response = new Response();
+$registry->set('Response', $response);
 
 // url class 
 
@@ -103,5 +105,5 @@ $route = (isset($request->get['route']) ? new Route($request->get['route']) : ne
 
 $controller->dispatch($route, new Route('error/not_found')); 
 
-
+$response->output();
 

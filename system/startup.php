@@ -15,3 +15,5 @@ function autoload($system)
 }
 
 spl_autoload_register('autoload');
+
+require_once SYSTEM_DIR . 'helpers.php';

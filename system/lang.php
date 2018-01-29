@@ -18,9 +18,7 @@ class Lang
     
     public function load($filename)
     {
-        $this->directory = (isset($this->directory) ? $this->directory : $this->defult);
-        $file = LANGS_DIR. $this->directory . DS . $filename . '.php';
-        
+        $file = (file_exists(LANGS_DIR. $this->directory . DS . $filename . '.php')) ? LANGS_DIR. $this->directory . DS . $filename . '.php' : LANGS_DIR. "en". DS . $filename . '.php';
         if(file_exists($file))
         {
             $lang = array();

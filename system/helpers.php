@@ -47,3 +47,8 @@ function is_email($email)
     }
 }
 
+function add_db_prefix(&$value)
+{
+    $value =" ". string(DB_PREFIX.$value);
+}
+
