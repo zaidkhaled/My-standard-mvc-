@@ -7,6 +7,6 @@ class Session
 
     public function __construct()
     {
-        $_SESSION =& $this->data;
+        $this->data =& $_SESSION ;
     } 
 }

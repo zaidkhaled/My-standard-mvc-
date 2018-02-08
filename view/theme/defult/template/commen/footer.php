@@ -1,3 +1,3 @@
 <?php
 
-echo "footer <br>";
+//echo "footer <br>";

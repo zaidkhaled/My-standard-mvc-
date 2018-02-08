@@ -21,7 +21,7 @@ class Request
         
         $this->get     = $_GET;
         $this->post    = $_POST;
-        $this->server  = $_SERVER;
+        $this->server  = $_SERVER; 
         $this->request = $_REQUEST;
         $this->cookie  = $_COOKIE;
         $this->files   = $_FILES;

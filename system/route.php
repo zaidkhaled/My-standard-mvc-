@@ -28,7 +28,7 @@ class route
         
         if (file_exists($file))
         {
-            $this-> file = $file;
+            $this->file = $file;
             
             $this-> controller = str_replace(array('_', '/'), "", ucfirst($path)) . 'Controller';
             

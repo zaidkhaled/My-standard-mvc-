@@ -271,7 +271,7 @@ class DB
         
         $this->sql .= " FROM " . $this->tbname;
         
-        $this->sql .= isset($options['join']) ? $this->join :FALSE ;
+        $this->sql .= isset($options['join']) ? $this->join : FALSE ;
         
         // where
         
@@ -292,6 +292,7 @@ class DB
             $this->bind($key, $value);
         }
         
+        $this->binded = array();
         
         try
         {
@@ -309,7 +310,82 @@ class DB
         $this->result = $this->query->$fetch();
         
         return $this->result;
+        
     }
+    
+    
+    
+ public function fet($tbname, $options = array(), $fetch = 'fetchAll')
+    {
+        $this->tbname = string(DB_PREFIX. $tbname);
+        
+        //select
+        
+        $this->sql = "SELECT ";
+        
+        if(isset($options['join']))
+        {
+            $this->join = $this->join($options['join']);
+        }
+        
+        
+        if(isset($options['select']))
+        {
+            $this->sql .= $this->select($options['select']);
+        }
+        else
+        {
+            $this->sql .= " * ";
+        }
+        
+        $this->sql .= " FROM " . $this->tbname;
+        
+        $this->sql .= isset($options['join']) ? $this->join : FALSE ;
+        
+        // where
+        
+        $this->sql .= isset($options['where']) ? ' WHERE ' . $this->where($options['where']) : FALSE;
+        
+        $this->sql .= isset($options['group_by']) ? ' GROUP BY ' . $this->group_by($options['group_by']) : FALSE;
+        
+        $this->sql .= isset($options['order_by']) ? ' ORDER BY ' . $this->order_by($options['order_by']) : FALSE;
+        
+        $this->sql .= isset($options['limit']) ? ' LIMIT ' . $this->limit($options['limit']) : FALSE;        
+        
+//        echo $this->sql ."<br>";
+        
+        $this->query = $this->query($this->sql);
+        
+        foreach($this->binded as $key => $value)
+        {
+            $this->bind($key, $value);
+        }
+     
+     
+        
+        
+//        try
+//        {
+//            $this->query->execute();
+//            
+//
+//            $this->rows = $this->query->rowCount();
+//        }
+//        catch(PDOExeption $e)
+//        {
+//            die( "error : " . $e->getMessage());
+//        }
+      
+        
+        $this->result = $this->query->$fetch();
+        
+//        return $this->binded;
+      return $this->binded;
+     
+     
+    
+    }
+    
     
     // select
     
@@ -333,7 +409,9 @@ class DB
 
             $sql = DBPREFIX . string($select);
         }
-
+ 
+        
+        
         return $sql;
 
     }
@@ -400,7 +478,7 @@ class DB
             $sql = $key . $condition . " :" . $key2;
             
             $this->binded[$key2] = $filter($value);
-            pre($this->binded);
+//            pre($this->binded);
         }
         
         return $sql;

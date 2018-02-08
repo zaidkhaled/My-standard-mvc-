@@ -19,8 +19,7 @@ $registry = new registry();
 
 // request class
 
-$request = new Request();
-$registry->set('Request', $request);
+$registry->set('Request', new Request());
 
 
 // controller class
@@ -30,80 +29,87 @@ $controller = new Controller($registry);
 
 // session class
 
-$session = new Session();
-$registry ->set('Session', $session);
+$registry ->set('Session', new Session());
 
 
 // document class
 
-$document = new Document();
-$registry ->set('Document', $document);
+$registry ->set('Document', new Document());
 
 // class database
 
-$db = new DB(SERVER_NAME, DB_NAME, DB_USER, DB_PASSWORD);
-$registry->set('db', $db);
+$registry->set('db', new DB(SERVER_NAME, DB_NAME, DB_USER, DB_PASSWORD));
 
 // setting class
 
-$setting  = new Setting();
-$registry->set('Settings', $setting);
+$registry->set('Settings', new Setting());
 
 
 // fetch setting curent lang
 
 $limit['limit'] = '1';
 
-$settings_result = $db->fetch('setting', $limit, "fetch");
+$limit['where'] = array("setting.theme",'defult', 'string');
+
+$settings_result = $registry->get('db')->fetch('setting', $limit, "fetch");
+
+define('MAX_FILE_SIZE', $settings_result['max_size']);
 
 foreach ($settings_result as $key => $value)
 {
-    $setting->set($key, $value);
+    $registry->get('Settings')->set($key, $value);
 }
-
 
 
 // fetch langs info
 
-$where = array('status', 1);
+$where['where'] = array('langs.status', 1, 'integer');
 
-$fetch_langs = $db->fetch('langs', $where);
+$fetch_langs = $registry->get('db')->fetch('langs');
+
+
 
 foreach ($fetch_langs as $lang)
 {
     $langs[$lang['code']] = $lang;
 }
 
+$total_langs = $registry->get('db')->rowCount();
 
-$current_lang = $langs[$setting->get('lang')];
+$registry->get('Settings')->set('langs', $fetch_langs);
+
+$registry->get('Settings')->set('total_langs', $total_langs);
+
+$current_lang = $langs[$registry->get('Settings')->get('lang')];
+
+
 
 // lang class 
 
-$language = new Lang($current_lang['dir']);
-$registry->set('Lang', $language);
-
+$registry->set('Lang', new Lang($current_lang['dir']));
 
 //model class
 
-$loder = new Loder($registry);
-$registry->set('Loder', $loder);
+$registry->set('Loder', new Loder($registry));
 
 // response class
 
-$response = new Response();
-$registry->set('Response', $response);
+$registry->set('Response', new Response());
+
+// upload class
+
+$registry->set('Upload', new Upload());
 
 // url class 
 
-$url = new Url(HTTP_SERVER);
-$registry->set('Url', $url);
+$registry->set('Url', new Url(HTTP_SERVER));
+
 
 
 // Route class
-
-$route = (isset($request->get['route']) ? new Route($request->get['route']) : new Route('page/home'));
+$route = (isset($registry->get('Request')->get['route']) ? new Route($registry->get('Request')->get['route']) : new Route('page/home'));
 
 $controller->dispatch($route, new Route('error/not_found')); 
 
-$response->output();
+$registry->get('Response')->output();
 

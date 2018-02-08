@@ -3,7 +3,7 @@
 
 class Setting
 {
-    private $data = array();
+    public $data = array();
     
     public function set($key, $value)
     {

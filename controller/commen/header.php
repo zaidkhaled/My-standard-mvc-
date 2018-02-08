@@ -13,6 +13,8 @@ class CommenHeaderController extends Controller
         
         $this->data['direction'] = $this->Lang->get('direction');
         
+        $this->data['title'] = $this->Document->getTitle();
+        
         if(file_exists(VIEW_DIR . $this->Settings->get('theme') . $template))
         {
             $this->template = VIEW_DIR . $this->Settings->get('theme') . $template;

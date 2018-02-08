@@ -17,11 +17,7 @@ abstract class Model
     
     public function __get($key)
     {
-        return $this->registry ->get($key);
+        return $this->registry->get($key);
     }
-    
-    public function cmcm()
-    {
-        echo "hi from model class innen";
-    }
+
 }

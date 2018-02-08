@@ -27,7 +27,7 @@ class Controller
     
     public function redirect($route)
     {
-       header('location'.$route);
+       header('location:'.$route);
        exit();
     }
     
@@ -99,7 +99,7 @@ class Controller
             
             $class = $route-> getController();
             
-            $controller = new $class($this->registry);
+            $controller = new $class($this->registry); // don't understand it why registry
             
             if(is_callable(array($controller, $route-> getMethod())))
             {
